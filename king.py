@@ -8,7 +8,6 @@ Y1 = 0.4
 Y_1 = 0.2
 
 
-
 class Position:
     def __init__(self, x, y):
         self.x = x
@@ -23,10 +22,14 @@ class Position:
         return Position(x, y)
 
     def __hash__(self):
-        return hash(tuple([self.x, self.y]))
+        return hash('x: {0}, y: {1}'.format(self.x, self.y))
 
 
-def get_choice():
+def start(x=0, y=0):
+    return {Position(x, y): 1}
+
+
+def get_choices():
     if X_1 + X0 + X1 == 1.0 and Y_1 + Y0 + Y1 == 1.0:
         x_chance = X0, X1, X_1
         y_chance = Y0, Y1, Y_1
@@ -36,17 +39,25 @@ def get_choice():
         raise ValueError
 
 
-def step(content):
-    choices = get_choice()
+def step(position):
+    choices = get_choices()
     new = {}
-    for pos in content.keys():
+    for pos in position.keys():
         for choice in choices.keys():
             s = pos + choice
             if s in new.keys():
-                new[pos] = new[pos] + (content[pos] * choices[choice])
+                new[pos] = new[pos] + (position[pos] * choices[choice])
             else:
-                new[pos] = content[pos] * choices[choice]
+                new[pos] = position[pos] * choices[choice]
     return new
 
 
+def walker(steps=1, x=0, y=0):
+    new = {}
+    while steps:
+        steps = steps - 1
+        if not new:
+            new = start(x, y)
+        new = step(new)
+    return new
 
